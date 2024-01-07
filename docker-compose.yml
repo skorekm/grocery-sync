@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  proxy:
+    image: tivix/docker-nginx:v17
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "8080:80"
+    environment:
+      - UPSTREAMS=/api:backend:8000,/:frontend:3000
+
+  backend:
+    restart: unless-stopped
+    stdin_open: true
+    build:
+      context: ./backend
+      target: dev
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/code
+    ports:
+      - '8000:8000'
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    logging:
+      driver: none
+    
+  
+  frontend:
+    restart: unless-stopped
+    stdin_open: true
+    build:
+      context: ./frontend
+      target: dev
+    volumes:
+      - ./frontend:/code
+      # Prevents from error related to the esbuild/darwin-arm64 binary
+      - /code/node_modules
+    ports:
+      - '3000:3000'
