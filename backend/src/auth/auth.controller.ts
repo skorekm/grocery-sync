@@ -9,22 +9,21 @@ import {
   HttpStatus,
   Get,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { plainToInstance } from 'class-transformer';
+import { Response } from 'express';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { Public } from './public.decorator';
 import { RegisterDto } from './dto/RegisterDto';
 import { RequestWithUser } from './interfaces/requestWithUser.interface';
-import { Response } from 'express';
-import { plainToInstance } from 'class-transformer';
+import { UserResponseDto } from './dto/UserResponseDto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
-    private jwtService: JwtService,
   ) {}
 
   @Public()
@@ -34,7 +33,7 @@ export class AuthController {
     const { user } = request;
     const cookie = this.authService.getCookieWithJwtToken(user.email);
     response.setHeader('Set-Cookie', cookie);
-    const userDto = plainToInstance(RegisterDto, user, {
+    const userDto = plainToInstance(UserResponseDto, user, {
       excludeExtraneousValues: true,
     });
     return response.send(userDto);
@@ -73,7 +72,7 @@ export class AuthController {
   @Get('user')
   async getUser(@Req() request: RequestWithUser) {
     const { user } = request;
-    const userDto = plainToInstance(RegisterDto, user, {
+    const userDto = plainToInstance(UserResponseDto, user, {
       excludeExtraneousValues: true,
     });
     return userDto;

@@ -1,16 +1,11 @@
-import { Exclude, Expose } from 'class-transformer';
-import { IsEmail, IsMongoId, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class RegisterDto {
-  @Expose()
-  @IsMongoId()
-  id: string;
-
-  @Expose()
   @IsEmail()
   email: string;
 
-  @Exclude()
   @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
   password: string;
 }
