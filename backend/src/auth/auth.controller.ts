@@ -42,12 +42,6 @@ export class AuthController {
   @Public()
   @Post('register')
   async register(@Body() registrationData: RegisterDto) {
-    const doesUserExist = await this.usersService.checkIfUserExists(
-      registrationData.email,
-    );
-    if (doesUserExist) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
-    }
     return this.authService.register(registrationData);
   }
 

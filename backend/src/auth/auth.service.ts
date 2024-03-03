@@ -42,6 +42,12 @@ export class AuthService {
         user: userDto,
       };
     } catch (error) {
+      if (error?.code === 11000) {
+        throw new HttpException(
+          'User with this email already exists',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,

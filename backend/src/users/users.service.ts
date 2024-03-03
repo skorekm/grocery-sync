@@ -13,10 +13,6 @@ export class UsersService {
     return createdUser.save();
   }
 
-  async checkIfUserExists(email: string): Promise<UserDocuemnt | null> {
-    return this.userModel.findOne({ email }).exec();
-  }
-
   async getByEmail(email: string) {
     const user = await this.userModel.findOne({ email }).exec();
     if (!user) {
